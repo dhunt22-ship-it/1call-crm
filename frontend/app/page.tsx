@@ -4,11 +4,12 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 
 export default function OneCallCockpit() {
-  const [currentUser] = useState({ name: 'Derek J. Hunt', role: 'owner' });
+  // Master Session Config - Personalized Profile
+  const [currentUser] = useState({ name: 'Derek J. Hunt', role: 'owner', repo: 'dhunt22-ship-it' });
 
-  // DATABASE CHANNELS
-  const [accounts, setAccounts] = useState([]);
-  const [contacts, setContacts] = useState([]);
+  // DATABASE CHANNELS - TypeScript Typed for Production Stabilities
+  const [accounts, setAccounts] = useState<any[]>([]);
+  const [contacts, setContacts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   // PERFORMANCE METRICS
@@ -49,7 +50,7 @@ export default function OneCallCockpit() {
         if (fetchedAccounts && fetchedAccounts.length > 0) {
           setSelectedAccountId(fetchedAccounts[0].id);
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error('Error hydrating CRM cockpit from Supabase:', err.message);
       } finally {
         setLoading(false);
@@ -59,7 +60,7 @@ export default function OneCallCockpit() {
   }, []);
 
   // Structural name lookup safety utility
-  const getAccountName = (acc) => {
+  const getAccountName = (acc: any) => {
     if (!acc) return '';
     return acc.name || acc.account_name || acc.company_name || `Account #${acc.id}`;
   };
@@ -76,7 +77,7 @@ export default function OneCallCockpit() {
     }
   }, [selectedAccountId, contacts]);
 
-  const handleCloseDeal = async (e) => {
+  const handleCloseDeal = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentAccount) return;
     
@@ -94,7 +95,7 @@ export default function OneCallCockpit() {
       setTotalAttempts(prev => prev + 1);
       setCashCollected(prev => prev + revenueInput);
       setNotes('');
-    } catch (err) {
+    } catch (err: any) {
       alert(`Database updated locally, server notice: ${err.message}`);
     }
   };
@@ -117,7 +118,11 @@ export default function OneCallCockpit() {
           <h1 className="text-xl font-black tracking-wider text-emerald-400 flex items-center gap-2">
             ⚡ 1CALL CRM COCKPIT
           </h1>
-          <p className="text-xs text-slate-400">Active Agent: {currentUser.name}</p>
+          <div className="flex items-center gap-2 mt-1">
+            <p className="text-xs text-slate-400">Agent: <span className="text-slate-200 font-semibold">{currentUser.name}</span></p>
+            <span className="text-slate-600 text-xs">•</span>
+            <p className="text-xs text-slate-400">Namespace: <span className="text-emerald-500 font-mono bg-emerald-950/50 px-2 py-0.5 rounded border border-emerald-900/50">{currentUser.repo}</span></p>
+          </div>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-slate-900 p-2 rounded-lg border border-slate-800 text-center text-xs">
           <div className="px-3 border-r border-slate-800"><p className="text-slate-500 font-bold">WINS TODAY</p><p className="text-base font-black text-emerald-400">{winsToday}/{totalAttempts}</p></div>
