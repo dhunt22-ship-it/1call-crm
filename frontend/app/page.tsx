@@ -59,10 +59,10 @@ export default function OneCallCockpit() {
     loadDashboardData();
   }, []);
 
-  // Structural name lookup safety utility
+  // Structural name lookup safety utility matching your exact database schema columns
   const getAccountName = (acc: any) => {
     if (!acc) return '';
-    return acc.name || acc.account_name || acc.company_name || `Account #${acc.id}`;
+    return acc.company_name || acc.name || acc.account_name || `Account #${acc.id}`;
   };
 
   const currentAccount = accounts.find(a => String(a.id) === String(selectedAccountId)) || null;
